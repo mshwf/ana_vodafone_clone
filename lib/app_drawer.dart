@@ -1,15 +1,21 @@
+import 'package:ana_vodafone_clone/my_expansion_tile.dart';
 import 'package:flutter/material.dart';
 import 'dashed_line.dart';
 
 class AppDrawer extends StatelessWidget {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
+    final GlobalKey expansionTileKey = GlobalKey();
+
     return SafeArea(
       child: Container(
         width: double.infinity,
         child: Drawer(
           child: Container(
             child: ListView(
+              controller: _scrollController,
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(15),
@@ -104,11 +110,8 @@ class AppDrawer extends StatelessWidget {
                 DashedLine.defaultDash(),
                 DrawerButton(image: 'images/shop.png', text: 'Shop'),
                 DashedLine.defaultDash(),
-                ExpansionTile(
-                  title: Text('ttxxg'),
-                  backgroundColor: Color(0xFFF4F4F4),
-                  children: <Widget>[Text('data')],
-                ),
+                ServicesList(
+                    globalKey: expansionTileKey, controller: _scrollController),
                 DrawerButton(image: 'images/logout.png', text: 'Logout'),
                 DashedLine.defaultDash(),
               ],
@@ -117,6 +120,84 @@ class AppDrawer extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ServicesList extends StatelessWidget {
+  double previousOffset;
+
+  ServicesList({
+    Key key,
+    GlobalKey globalKey,
+    ScrollController controller,
+  }) : super(key: key) {
+    _scrollController = controller;
+    myKey = globalKey;
+  }
+  GlobalKey myKey;
+  ScrollController _scrollController;
+  @override
+  Widget build(BuildContext context) {
+    return MyExpansionTile(
+      onExpansionChanged: (isExpanded) {
+        if (isExpanded) previousOffset = _scrollController.offset;
+        _scrollToSelectedContent(isExpanded, previousOffset, index, myKey);
+      },
+      myKey: myKey,
+      title: Text(
+        'Services',
+        style: TextStyle(fontSize: 16),
+      ),
+      controller: _scrollController,
+      backgroundColor: Color(0xFFF4F4F4),
+      children: <Widget>[
+        DrawerButton(image: 'images/salefny.png', text: 'Sallefny shokran'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/usb.png', text: 'USB'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/white_list.png', text: 'Whitelist'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/black_list.png', text: 'Blacklist'),
+        DashedLine.defaultDash(),
+        DrawerButton(
+            image: 'images/missed_call_keeper.png', text: 'Missed Call Keeper'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/my_red_family.png', text: 'My Red Family'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/ala_7saby.png', text: '3ala 7esaby'),
+        DashedLine.defaultDash(),
+        DrawerButton(
+            image: 'images/edfa3ly_shokran.png', text: 'Edfa3ly Shokran'),
+        DashedLine.defaultDash(),
+        DrawerButton(
+            image: 'images/kalemny_shokran.png', text: 'Kallemny Shokran'),
+        DashedLine.defaultDash(),
+        DrawerButton(image: 'images/store_locator.png', text: 'Store Locator'),
+        DashedLine.defaultDash(),
+        DrawerButton(
+          image: 'images/roaming.png',
+          text: 'Roaming',
+          isNew: true,
+        ),
+        DashedLine.defaultDash(),
+        DrawerButton(
+            image: 'images/alerting_services.png', text: 'Alerting services'),
+      ],
+    );
+  }
+
+  void _scrollToSelectedContent(
+      bool isExpanded, double previousOffset, int index, expansionTileKey) {
+    final keyContext = myKey.currentContext;
+
+    if (keyContext != null) {
+      // make sure that your widget is visible
+      final box = keyContext.findRenderObject() as RenderBox;
+      _scrollController.animateTo(
+          isExpanded ? (box.size.height * index) : previousOffset,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear);
+    }
   }
 }
 
@@ -133,38 +214,37 @@ class DrawerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Image.asset(
-                  image,
-                  height: 45,
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Text(text),
-              ],
-            ),
-            if (isNew)
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8), color: Colors.red),
-                padding: EdgeInsets.symmetric(vertical: 3, horizontal: 7),
-                child: Text(
-                  'New',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
-                ),
-              )
-          ],
-        ),
+    return FlatButton(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Image.asset(
+                image,
+                height: 45,
+              ),
+              SizedBox(width: 12),
+              Text(
+                text,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+          if (isNew)
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8), color: Colors.red),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 7),
+              child: Text(
+                'New',
+                style: TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            )
+        ],
       ),
+      onPressed: () {},
     );
   }
 }
