@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
 import 'app_drawer.dart';
 
 void main() => runApp(MyApp());
@@ -11,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Ana Vodafone - clone',
       theme: ThemeData(
         fontFamily: 'vodafone_rg_and_meduim',
         // This is the theme of your application.
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
             title: TextStyle(fontWeight: FontWeight.w400, fontSize: 16)),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Ana Vodafone - clone'),
     );
   }
 }
@@ -53,7 +52,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  PageController controller = PageController();
+  PageController _pageViewController = PageController();
   TabController _tabController;
   AnimationController _counterController;
   Animation<double> animation;
@@ -61,26 +60,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final double fixedFlexesLeft = 397;
   final double flexPackage = 600;
   double flexesLeft;
-  String flexText;
 
   @override
   void initState() {
     super.initState();
 
-    progress = fixedFlexesLeft / flexPackage;
-    flexText = '${fixedFlexesLeft.round()}';
+    flexesLeft = fixedFlexesLeft;
+    _tabController = new TabController(length: 3, vsync: this)
+      ..addListener(tabChanged);
   }
 
-  double progress;
   @override
   Widget build(BuildContext context) {
-    flexesLeft = fixedFlexesLeft;
-    _tabController = new TabController(length: 3, vsync: this);
-    _tabController.addListener(tabChanged);
-    _counterController =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this);
-
-    var _pageViewController = PageController();
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -240,7 +231,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                                       'vodafone_rg_and_meduim'),
                                               children: [
                                                 TextSpan(
-                                                    text: '$flexText ',
+                                                    text:
+                                                        '${flexesLeft.round()} ',
                                                     style: TextStyle(
                                                       fontFamily:
                                                           'vodafone_rg_and_meduim',
@@ -263,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         ),
                                         LinearProgressIndicator(
                                           backgroundColor: Color(0xFFF4F4F4),
-                                          value: progress,
+                                          value: flexesLeft / flexPackage,
                                         ),
                                       ],
                                     ),
@@ -399,19 +391,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void tabChanged() {
-    if (true) {
-      if (_tabController.index == 0) {
+    if (_tabController.index == 0) {
+      setState(() {
+        _counterController = AnimationController(
+            duration: const Duration(milliseconds: 400), vsync: this);
         animation = Tween<double>(begin: flexPackage, end: fixedFlexesLeft)
+            .chain(CurveTween(curve: Curves.easeOut))
             .animate(_counterController)
               ..addListener(() {
                 setState(() {
                   flexesLeft = animation.value;
-                  flexText = '${flexesLeft.round()}';
-                  progress = flexesLeft / flexPackage;
                 });
               });
+
         _counterController.forward();
-      }
+      });
     }
   }
 }
