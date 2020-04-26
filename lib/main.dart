@@ -52,11 +52,34 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PageController controller = PageController();
+  TabController _tabController;
+  AnimationController _counterController;
+  Animation<double> animation;
+
+  final double fixedFlexesLeft = 397;
+  final double flexPackage = 600;
+  double flexesLeft;
+  String flexText;
 
   @override
+  void initState() {
+    super.initState();
+
+    progress = fixedFlexesLeft / flexPackage;
+    flexText = '${fixedFlexesLeft.round()}';
+  }
+
+  double progress;
+  @override
   Widget build(BuildContext context) {
+    flexesLeft = fixedFlexesLeft;
+    _tabController = new TabController(length: 3, vsync: this);
+    _tabController.addListener(tabChanged);
+    _counterController =
+        AnimationController(duration: const Duration(seconds: 1), vsync: this);
+
     var _pageViewController = PageController();
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -167,6 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         TabBar(
+                            controller: _tabController,
                             indicatorColor: Colors.red,
                             labelColor: Colors.red,
                             unselectedLabelColor: Colors.black,
@@ -195,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ]),
                         Expanded(
                           child: TabBarView(
+                            controller: _tabController,
                             children: [
                               Container(
                                 padding: EdgeInsets.all(10),
@@ -215,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       'vodafone_rg_and_meduim'),
                                               children: [
                                                 TextSpan(
-                                                    text: '398 ',
+                                                    text: '$flexText ',
                                                     style: TextStyle(
                                                       fontFamily:
                                                           'vodafone_rg_and_meduim',
@@ -225,7 +250,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     )),
                                                 TextSpan(text: 'left of '),
                                                 TextSpan(
-                                                    text: '600 ',
+                                                    text:
+                                                        '${flexPackage.round()} ',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold)),
@@ -237,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         LinearProgressIndicator(
                                           backgroundColor: Color(0xFFF4F4F4),
-                                          value: 398.0 / 600.0,
+                                          value: progress,
                                         ),
                                       ],
                                     ),
@@ -370,6 +396,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void tabChanged() {
+    if (true) {
+      if (_tabController.index == 0) {
+        animation = Tween<double>(begin: flexPackage, end: fixedFlexesLeft)
+            .animate(_counterController)
+              ..addListener(() {
+                setState(() {
+                  flexesLeft = animation.value;
+                  flexText = '${flexesLeft.round()}';
+                  progress = flexesLeft / flexPackage;
+                });
+              });
+        _counterController.forward();
+      }
+    }
   }
 }
 

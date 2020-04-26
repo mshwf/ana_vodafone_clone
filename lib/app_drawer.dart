@@ -2,12 +2,19 @@ import 'package:ana_vodafone_clone/my_expansion_tile.dart';
 import 'package:flutter/material.dart';
 import 'dashed_line.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
+  @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     final GlobalKey expansionTileKey = GlobalKey();
+
+    GlobalKey lastDashKey = GlobalKey();
 
     return SafeArea(
       child: Container(
@@ -31,9 +38,9 @@ class AppDrawer extends StatelessWidget {
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        child: Icon(
-                          Icons.close,
-                          size: 30,
+                        child: Image.asset(
+                          'images/ic_icon_close.png',
+                          height: 22,
                         ),
                       ),
                       SizedBox(
@@ -111,9 +118,42 @@ class AppDrawer extends StatelessWidget {
                 DrawerButton(image: 'images/shop.png', text: 'Shop'),
                 DashedLine.defaultDash(),
                 ServicesList(
-                    globalKey: expansionTileKey, controller: _scrollController),
+                  // key: expansionTileKey,
+                  controller: _scrollController,
+                  expansionChanged: (expanded) {
+                    if (expanded) {
+                      // RenderBox expansion =
+                      //     expansionTileKey.currentContext.findRenderObject();
+                      RenderBox linebox =
+                          lastDashKey.currentContext.findRenderObject();
+                      Offset position = linebox.localToGlobal(Offset.zero);
+                      double lineY = position.dy;
+                      setState(() {
+                        var ctx = lastDashKey.currentContext;
+                        // Offset positionEx =
+                        //     expansion.localToGlobal(Offset.zero);
+                        // double expY = positionEx.dy;
+
+                        Future.delayed(Duration(milliseconds: 200), () {
+                          var height = 660.0;
+
+                          print('LineY=$lineY');
+                          _scrollController.animateTo(
+                            height,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 200),
+                          );
+                        });
+                      });
+                    }
+                  },
+                ),
+                DashedLine.defaultDash(key: lastDashKey),
                 DrawerButton(image: 'images/logout.png', text: 'Logout'),
                 DashedLine.defaultDash(),
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
@@ -123,32 +163,28 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-class ServicesList extends StatelessWidget {
-  double previousOffset;
-
+class ServicesList extends StatefulWidget {
   ServicesList({
     Key key,
+    this.expansionChanged,
     GlobalKey globalKey,
     ScrollController controller,
-  }) : super(key: key) {
-    _scrollController = controller;
-    myKey = globalKey;
-  }
+  }) : super(key: key);
   GlobalKey myKey;
-  ScrollController _scrollController;
+  ValueChanged<bool> expansionChanged;
+  @override
+  _ServicesListState createState() => _ServicesListState();
+}
+
+class _ServicesListState extends State<ServicesList> {
   @override
   Widget build(BuildContext context) {
     return MyExpansionTile(
-      onExpansionChanged: (isExpanded) {
-        if (isExpanded) previousOffset = _scrollController.offset;
-        _scrollToSelectedContent(isExpanded, previousOffset, index, myKey);
-      },
-      myKey: myKey,
+      onExpansionChanged: super.widget.expansionChanged,
       title: Text(
         'Services',
         style: TextStyle(fontSize: 16),
       ),
-      controller: _scrollController,
       backgroundColor: Color(0xFFF4F4F4),
       children: <Widget>[
         DrawerButton(image: 'images/salefny.png', text: 'Sallefny shokran'),
@@ -182,22 +218,9 @@ class ServicesList extends StatelessWidget {
         DashedLine.defaultDash(),
         DrawerButton(
             image: 'images/alerting_services.png', text: 'Alerting services'),
+        // DashedLine.defaultDash(),
       ],
     );
-  }
-
-  void _scrollToSelectedContent(
-      bool isExpanded, double previousOffset, int index, expansionTileKey) {
-    final keyContext = myKey.currentContext;
-
-    if (keyContext != null) {
-      // make sure that your widget is visible
-      final box = keyContext.findRenderObject() as RenderBox;
-      _scrollController.animateTo(
-          isExpanded ? (box.size.height * index) : previousOffset,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.linear);
-    }
   }
 }
 

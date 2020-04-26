@@ -14,10 +14,11 @@ class DashedLine extends StatelessWidget {
   const DashedLine(
       {this.height = 1, this.color = Colors.black, this.dashWidth = 5.0});
 
-  DashedLine.defaultDash()
+  DashedLine.defaultDash({Key key})
       : color = Colors.black.withOpacity(.3),
         dashWidth = 3,
-        height = 1;
+        height = 1,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

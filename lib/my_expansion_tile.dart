@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 int index = -1;
-const Duration _kExpand = Duration(milliseconds: 200);
+const Duration _kExpand = Duration(milliseconds: 500);
 
 class MyExpansionTile extends StatefulWidget {
-  GlobalKey keyContext;
-
   MyExpansionTile({
     Key key,
     GlobalKey myKey,
@@ -17,11 +15,7 @@ class MyExpansionTile extends StatefulWidget {
     this.initiallyExpanded = false,
     ScrollController controller,
   })  : assert(initiallyExpanded != null),
-        super(key: key) {
-    _scrollController = controller;
-    keyContext = myKey;
-  }
-  ScrollController _scrollController = ScrollController();
+        super(key: key);
 
   final Widget title;
 
@@ -54,10 +48,6 @@ class _MyExpansionTileState extends State<MyExpansionTile>
   AnimationController _controller;
   Animation<double> _iconTurns;
   Animation<double> _heightFactor;
-  // Animation<Color> _borderColor;
-  // Animation<Color> _headerColor;
-  // Animation<Color> _iconColor;
-  // Animation<Color> _backgroundColor;
 
   bool _isExpanded = false;
 
@@ -67,11 +57,6 @@ class _MyExpansionTileState extends State<MyExpansionTile>
     _controller = AnimationController(duration: _kExpand, vsync: this);
     _heightFactor = _controller.drive(_easeInTween);
     _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
-    // _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
-    // _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
-    // _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
-    // _backgroundColor =
-    //     _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
     _isExpanded =
         PageStorage.of(context)?.readState(context) ?? widget.initiallyExpanded;
@@ -86,25 +71,10 @@ class _MyExpansionTileState extends State<MyExpansionTile>
 
   void _handleTap() {
     setState(() {
-      var bxxx = context.findRenderObject() as RenderBox;
-      // final box =
-      //     widget.keyContext.currentContext.findRenderObject() as RenderBox;
-      // widget._scrollController.animateTo(
-      //     _isExpanded
-      //         ? (bxxx.size.height * index++)
-      //         : widget._scrollController.offset,
-      //     duration: Duration(milliseconds: 500),
-      //     curve: Curves.linear);
-
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
         _controller.forward();
-        // widget._scrollController
-        //     .animateTo(5000000, duration: _kExpand, curve: Curves.linear);
       } else {
-        // widget._scrollController
-        //     .animateTo(200, duration: _kExpand, curve: Curves.linear);
-
         _controller.reverse().then<void>((void value) {
           if (!mounted) return;
           setState(() {
@@ -123,7 +93,6 @@ class _MyExpansionTileState extends State<MyExpansionTile>
 
     return Container(
       decoration: BoxDecoration(
-        // color: _backgroundColor.value ?? Colors.transparent,
         border: Border(
           top: BorderSide(color: borderSideColor),
           bottom: BorderSide(color: borderSideColor),
@@ -133,16 +102,17 @@ class _MyExpansionTileState extends State<MyExpansionTile>
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTileTheme.merge(
-            // iconColor: _iconColor.value,
-            // textColor: _headerColor.value,
-            child: ListTile(
-              onTap: _handleTap,
-              title: widget.title,
-              trailing: RotationTransition(
-                turns: _iconTurns,
-                child: const Icon(
-                  Icons.expand_more,
-                  size: 40,
+            child: Container(
+              color: Color(0xFFF4F4F4),
+              child: ListTile(
+                onTap: _handleTap,
+                title: widget.title,
+                trailing: RotationTransition(
+                  turns: _iconTurns,
+                  child: Image.asset(
+                    'images/down_grey_arrow.png',
+                    height: 30,
+                  ),
                 ),
               ),
             ),
