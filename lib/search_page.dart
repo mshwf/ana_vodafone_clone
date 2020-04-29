@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ana_vodafone_clone/utils/space.dart';
 import 'package:flutter/material.dart';
 
 import 'models/search_result.dart';
@@ -13,7 +14,6 @@ class SearchPage extends StatefulWidget {
 bool _voiceOn = false;
 Random random = Random();
 AnimationController _baseController;
-TextEditingController _searchTextController;
 SearchService _searchService = SearchService();
 List<SearchResult> _searchResults = List<SearchResult>();
 
@@ -26,7 +26,6 @@ class _SearchPageState extends State<SearchPage>
     super.initState();
     _baseController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 2000));
-    _searchTextController = TextEditingController();
   }
 
   @override
@@ -82,11 +81,8 @@ class _SearchPageState extends State<SearchPage>
                           onChanged: (txt) {
                             setState(() {
                               _searchResults = _searchService.search(txt);
-                              print(
-                                  '{{{_searchResults.length>>${_searchResults.length}');
                             });
                           },
-                          controller: _searchTextController,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
@@ -197,45 +193,48 @@ class _SearchPageState extends State<SearchPage>
                 ),
                 Visibility(
                   visible: _hasSearchResult,
-                  child: Wrap(
-                    runSpacing: 15,
-                    children: _searchResults.map((r) {
-                      return RaisedButton(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(5.0)),
-                          color: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 15),
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    children: withSpace(
+                        verticalSpace: 15,
+                        children: _searchResults.map((r) {
+                          return RaisedButton(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(5.0)),
+                              color: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 15),
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    r.title,
-                                    style: TextStyle(fontSize: 20),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: withSpace(
+                                        verticalSpace: 5,
+                                        children: <Widget>[
+                                          Text(
+                                            r.title,
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          Text(
+                                            r.section,
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                        ]),
                                   ),
-                                  Text(
-                                    r.section,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
+                                  Image.asset(
+                                    'images/red_arrow_right.png',
+                                    height: 30,
+                                  )
                                 ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: Image.asset(
-                                  'images/red_arrow_right.png',
-                                  height: 30,
-                                ),
-                              )
-                            ],
-                          ));
-                    }).toList(),
+                              ));
+                        }).toList()),
                   ),
                 )
               ],
