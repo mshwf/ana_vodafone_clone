@@ -218,7 +218,6 @@ class _ServicesListState extends State<ServicesList> {
         DashedLine.defaultDash(),
         DrawerButton(
             image: 'images/alerting_services.png', text: 'Alerting services'),
-        // DashedLine.defaultDash(),
       ],
     );
   }

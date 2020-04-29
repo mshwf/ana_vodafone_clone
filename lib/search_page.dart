@@ -277,23 +277,10 @@ class _SearchPageState extends State<SearchPage>
     });
   }
 
-  double _generateHeight(int i) {
-    int j = i + 1;
-    if (j == 1 || j == 12 || j == 13 || j == 24 || j == 25 || j == 36) return 4;
-
-    if (j == 2 || j == 11 || j == 14 || j == 23 || j == 26 || j == 35) return 8;
-
-    if (j == 3 || j == 10 || j == 15 || j == 22 || j == 27 || j == 34)
-      return 12;
-
-    if (j == 4 || j == 9 || j == 16 || j == 21 || j == 28 || j == 33) return 16;
-
-    if (j == 5 || j == 8 || j == 17 || j == 20 || j == 29 || j == 32) return 20;
-
-    if (j == 6 || j == 7 || j == 18 || j == 19 || j == 30 || j == 31)
-      return 24;
-    else
-      return 25;
+  @override
+  void dispose() {
+    super.dispose();
+    _baseController.dispose();
   }
 
   String _getSearchCount(int length) {
