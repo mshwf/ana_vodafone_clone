@@ -65,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final double fixedFlexesLeft = 397;
   final double flexPackage = 600;
   double flexesLeft;
-  final String balance = NumberFormat.currency(symbol: 'EGP ').format(4.25);
   @override
   void initState() {
     super.initState();
@@ -451,21 +450,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+                  children: [
                     Expanded(
                       child: Image.asset(
                         'images/team010card.png',
-                        height: 110,
                       ),
+                    ),
+                    SizedBox(
+                      width: 20,
                     ),
                     Expanded(
                       child: Card(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Image.asset(
                                     'images/ic_menu_bill_selected.png',
@@ -487,9 +490,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               ),
                               Text('4.25 EGP',
                                   style: TextStyle(
-                                      fontSize: 30,
+                                      fontFamily: 'vodafone_rg',
+                                      fontSize: 25,
                                       fontWeight: FontWeight.bold)),
                               Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
