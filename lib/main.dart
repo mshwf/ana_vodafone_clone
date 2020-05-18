@@ -337,7 +337,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                             ],
                                           ),
                                           OutlineButton(
-                                            highlightColor: Colors.red,
                                             borderSide: BorderSide(
                                                 width: 1.0, color: Colors.red),
                                             child: Text(
